@@ -367,3 +367,11 @@ function downloadFile(fileUrl, fileName) {
     link.setAttribute('download', fileName);
     link.click();
 }
+
+
+
+
+
+
+
+
