@@ -321,38 +321,38 @@ jQuery(function () {
 
 });
 
-// Contact Form
-    var form = $('.contact__form'),
-        message = $('.contact__msg'),
-        form_data;
-    // success function
-    function done_func(response) {
-        message.fadeIn().removeClass('alert-danger').addClass('alert-success');
-        message.text(response);
-        setTimeout(function () {
-            message.fadeOut();
-        }, 2000);
-        form.find('input:not([type="submit"]), textarea').val('');
-    }
-    // fail function
-    function fail_func(data) {
-        message.fadeIn().removeClass('alert-success').addClass('alert-success');
-        message.text(data.responseText);
-        setTimeout(function () {
-            message.fadeOut();
-        }, 2000);
-    }
-    form.submit(function (e) {
-        e.preventDefault();
-        form_data = $(this).serialize();
-        $.ajax({
-            type: 'POST',
-            url: form.attr('action'),
-            data: form_data
-        })
-        .done(done_func)
-        .fail(fail_func);
-    });
+// // Contact Form
+//     var form = $('.contact__form'),
+//         message = $('.contact__msg'),
+//         form_data;
+//     // success function
+//     function done_func(response) {
+//         message.fadeIn().removeClass('alert-danger').addClass('alert-success');
+//         message.text(response);
+//         setTimeout(function () {
+//             message.fadeOut();
+//         }, 2000);
+//         form.find('input:not([type="submit"]), textarea').val('');
+//     }
+//     // fail function
+//     function fail_func(data) {
+//         message.fadeIn().removeClass('alert-success').addClass('alert-success');
+//         message.text(data.responseText);
+//         setTimeout(function () {
+//             message.fadeOut();
+//         }, 2000);
+//     }
+//     form.submit(function (e) {
+//         e.preventDefault();
+//         form_data = $(this).serialize();
+//         $.ajax({
+//             type: 'POST',
+//             url: form.attr('action'),
+//             data: form_data
+//         })
+//         .done(done_func)
+//         .fail(fail_func);
+//     });
 
 // function to display current year on the footer
 document.addEventListener('DOMContentLoaded', function() {
@@ -368,10 +368,74 @@ function downloadFile(fileUrl, fileName) {
     link.click();
 }
 
+// helper function to get the value of the input fields
+function getValue(id){
+    return document.getElementById(id).value;
+}
+// helper function to validate the input fields
+function validateRegex(input, regex){
+    return input.match(regex) ? input : '';
+}
+//helper function to validate inputs without regex
+function validateWithoutRegex(input){
+    return input.length > 0 ? input : '';
+}
+
+// function to validate contact form on the contact page
+function validateForm() {
+    const fullNameRegex = /^[a-zA-Z'-]{2,20}(?:\s[a-zA-Z'-]{2,20}){1,2}$/;
+    const phoneRegex = /^([0-9]{3} ?){2}[0-9]{4}$/;
+    const emailRegex = /^([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63})$/;
+
+    let userInputs = {
+        name: getValue("name"),
+        phone: getValue("phone"),
+        email: getValue("email"),
+        subject: getValue("subject"),
+        message: getValue("message")
+    }
+
+    userInputs.name = validateRegex(userInputs.name, fullNameRegex)
+    userInputs.phone = validateRegex(userInputs.phone, phoneRegex);
+    userInputs.email = validateRegex(userInputs.email, emailRegex);
+    userInputs.subject = validateWithoutRegex(userInputs.subject);
+    userInputs.message = validateWithoutRegex(userInputs.message);
+
+    console.log('userInputs', userInputs);
+
+    let message = $('.contact__msg');
+    let isValid = true;
+    let invalidInputs = [];
+
+    Object.entries(userInputs).forEach(([key, value]) => {
+        if(value.length === 0) {
+            isValid = false;
+            invalidInputs.push(key);
+        }
+    });
+
+    if(isValid) {
+        message.text(`Thank you for your message. I will get back to you shortly`);
+        message.removeClass('alert-danger').addClass('alert-success');
+        setTimeout(function () {
+            message.fadeOut();
+        }, 3000);
+    } else {
+        let fields = invalidInputs.join(', ');
+        message.text(`Please fill out the following fields: ${fields.toLocaleUpperCase()}`);
+        message.removeClass('alert-success').addClass('alert-danger');
+        setTimeout(function () {
+            message.fadeOut();
+        }, 3000);
+
+        // Clear only the invalid inputs
+        invalidInputs.forEach(id => {
+            document.getElementById(id).value = '';
+        });
+    }
+
+    message.fadeIn();
 
 
-
-
-
-
+}
 
