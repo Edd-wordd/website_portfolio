@@ -3893,6 +3893,12 @@ input[type="submit"] {
     position: relative;
     margin-bottom: 30px;
 }
+.project .img-fluid{
+    width: 400px;
+    height: 250px;
+    object-fit: cover;
+}
+
 
 .project .desc {
     position: absolute;
