@@ -385,19 +385,22 @@ function validateWithoutRegex(input){
 function validateForm() {
     const fullNameRegex = /^[a-zA-Z'-]{2,20}(?:\s[a-zA-Z'-]{2,20}){1,2}$/;
     const phoneRegex = /^([0-9]{3} ?){2}[0-9]{4}$/;
-    const emailRegex = /^([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63})$/;
+    // const emailRegex = /^([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63})$/;
+
+
+    validateEmail(document.getElementById("email").value);
 
     let userInputs = {
         name: getValue("name"),
         phone: getValue("phone"),
-        email: getValue("email"),
+        // email: getValue("email"),
         subject: getValue("subject"),
         message: getValue("message")
     }
 
     userInputs.name = validateRegex(userInputs.name, fullNameRegex)
     userInputs.phone = validateRegex(userInputs.phone, phoneRegex);
-    userInputs.email = validateRegex(userInputs.email, emailRegex);
+    // userInputs.email = validateRegex(userInputs.email, emailRegex);
     userInputs.subject = validateWithoutRegex(userInputs.subject);
     userInputs.message = validateWithoutRegex(userInputs.message);
 
@@ -438,4 +441,33 @@ function validateForm() {
 
 
 }
+
+//function to validate email with regex and api call
+
+function validateEmail(email){
+    const emailRegex = /^([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63})$/;
+
+    let myHeaders = new Headers();
+    myHeaders.append('apikey', process.env.EMAIL_VALIDATION_API_KEY);
+
+    let requestOptions = {
+        method: 'Get',
+        redirect: 'follow',
+        headers: myHeaders
+    }
+
+    if(email.trim().match(emailRegex)){
+        try{
+           fetch(`https://api.apilayer.com/email_verification/check?email=${email}`,requestOptions)
+             .then(res => res.json())
+             .then(data => {
+                 console.log(data);
+             })
+        }
+        catch(error){
+            console.error(error);
+        }
+    }
+}
+
 
