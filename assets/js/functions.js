@@ -448,7 +448,7 @@ function validateEmail(email){
     const emailRegex = /^([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63})$/;
 
     const myHeaders = new Headers();
-    myHeaders.append('apikey', 'Email API key');
+    myHeaders.append('apikey', 'yek5T9dPdTYrbbGWJoq57iWgg3NbZlL8');
 
     let requestOptions = {
         method: 'Get',
@@ -477,7 +477,7 @@ function validatePhone(phone){
     let reformattedPhone = '+1' + phone
 
     const myHeaders = new Headers()
-    myHeaders.append('apikey', 'phone api key')
+    myHeaders.append('apikey', 'yek5T9dPdTYrbbGWJoq57iWgg3NbZlL8')
 
     let requestOptions = {
         method: "GET",
