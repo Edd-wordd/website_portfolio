@@ -443,12 +443,11 @@ function validateForm() {
 }
 
 //function to validate email with regex and api call
-
 function validateEmail(email){
     const emailRegex = /^([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63})$/;
 
-    let myHeaders = new Headers();
-    myHeaders.append('apikey', process.env.EMAIL_VALIDATION_API_KEY);
+    const myHeaders = new Headers();
+    myHeaders.append('apikey', <Email API key>);
 
     let requestOptions = {
         method: 'Get',
@@ -462,6 +461,7 @@ function validateEmail(email){
              .then(res => res.json())
              .then(data => {
                  console.log(data);
+                 console.log(data.smtp_check)
              })
         }
         catch(error){
