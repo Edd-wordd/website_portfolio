@@ -384,22 +384,23 @@ function validateWithoutRegex(input){
 // function to validate contact form on the contact page
 function validateForm() {
     const fullNameRegex = /^[a-zA-Z'-]{2,20}(?:\s[a-zA-Z'-]{2,20}){1,2}$/;
-    const phoneRegex = /^([0-9]{3} ?){2}[0-9]{4}$/;
+    // const phoneRegex = /^([0-9]{3} ?){2}[0-9]{4}$/;
     // const emailRegex = /^([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63})$/;
 
 
     validateEmail(document.getElementById("email").value);
+    validatePhone(document.getElementById("phone").value);
 
     let userInputs = {
         name: getValue("name"),
-        phone: getValue("phone"),
+        // phone: getValue("phone"),
         // email: getValue("email"),
         subject: getValue("subject"),
         message: getValue("message")
     }
 
     userInputs.name = validateRegex(userInputs.name, fullNameRegex)
-    userInputs.phone = validateRegex(userInputs.phone, phoneRegex);
+    // userInputs.phone = validateRegex(userInputs.phone, phoneRegex);
     // userInputs.email = validateRegex(userInputs.email, emailRegex);
     userInputs.subject = validateWithoutRegex(userInputs.subject);
     userInputs.message = validateWithoutRegex(userInputs.message);
@@ -447,7 +448,7 @@ function validateEmail(email){
     const emailRegex = /^([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63})$/;
 
     const myHeaders = new Headers();
-    myHeaders.append('apikey', <Email API key>);
+    myHeaders.append('apikey', 'Email API key');
 
     let requestOptions = {
         method: 'Get',
@@ -471,3 +472,28 @@ function validateEmail(email){
 }
 
 
+function validatePhone(phone){
+    const phoneRegex = /^([0-9]{3} ?){2}[0-9]{4}$/;
+    let reformattedPhone = '+1' + phone
+
+    const myHeaders = new Headers()
+    myHeaders.append('apikey', 'phone api key')
+
+    let requestOptions = {
+        method: "GET",
+        redirect: "follow",
+        headers: myHeaders
+    }
+
+    if(phone.trim().match(phoneRegex))    {
+        try{
+            fetch(`https://api.apilayer.com/number_verification/validate?number=${reformattedPhone}`, requestOptions)
+              .then(res => res.json())
+              .then(data => {
+                  console.log(data)
+              })
+        }catch(err){
+            console.error(err)
+        }
+}
+}
