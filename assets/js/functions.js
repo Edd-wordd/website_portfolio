@@ -444,32 +444,32 @@ function validateForm() {
 }
 
 //function to validate email with regex and api call
-function validateEmail(email){
-    const emailRegex = /^([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63})$/;
-
-    const myHeaders = new Headers();
-    myHeaders.append('apikey', 'yek5T9dPdTYrbbGWJoq57iWgg3NbZlL8');
-
-    let requestOptions = {
-        method: 'Get',
-        redirect: 'follow',
-        headers: myHeaders
-    }
-
-    if(email.trim().match(emailRegex)){
-        try{
-           fetch(`https://api.apilayer.com/email_verification/check?email=${email}`,requestOptions)
-             .then(res => res.json())
-             .then(data => {
-                 console.log(data);
-                 console.log(data.smtp_check)
-             })
-        }
-        catch(error){
-            console.error(error);
-        }
-    }
-}
+// function validateEmail(email){
+//     const emailRegex = /^([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63})$/;
+//
+//     const myHeaders = new Headers();
+//     myHeaders.append('apikey', 'yek5T9dPdTYrbbGWJoq57iWgg3NbZlL8');
+//
+//     let requestOptions = {
+//         method: 'GET',
+//         redirect: 'follow',
+//         headers: myHeaders
+//     }
+//
+//     if(email.trim().match(emailRegex)){
+//         try{
+//            fetch(`https://api.apilayer.com/email_verification/check?email=${email}`,requestOptions)
+//              .then(res => res.json())
+//              .then(data => {
+//                  console.log(data);
+//                  console.log(data.smtp_check)
+//              })
+//         }
+//         catch(error){
+//             console.error(error);
+//         }
+//     }
+// }
 
 
 function validatePhone(phone){
@@ -496,4 +496,48 @@ function validatePhone(phone){
             console.error(err)
         }
 }
+}
+
+function validateEmail(email) {
+    const emailRegex = /^([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63})$/;
+
+    const myHeaders = new Headers();
+    myHeaders.append('apikey', 'yek5T9dPdTYrbbGWJoq57iWgg3NbZlL8');
+
+    let requestOptions = {
+        method: 'GET',
+        redirect: 'follow',
+        headers: myHeaders
+    };
+
+    if (email.trim().match(emailRegex)) {
+        fetch(`https://api.apilayer.com/email_verification/check?email=${email}`, requestOptions)
+          .then(res => {
+              if (!res.ok) {
+                  throw new Error(res.status);
+              }
+              return res.json();
+          })
+          .then(data => {
+              console.log(data);
+              console.log(data.smtp_check);
+              return data.smtp_check;
+          })
+          .catch(error => {
+              if (error.message === '405') {
+                  console.error('Method Not Allowed: The requested HTTP method is not supported.');
+              } else if (error.message === '404') {
+                  console.error('Not Found: The requested resource could not be found.');
+              } else {
+                  console.error('An error occurred during the API request:', error.message);
+              }
+          })
+          .catch(error => {
+              console.error('Network error occurred:', error);
+          });
+    } else {
+        console.error('Invalid email format.');
+    }
+
+
 }
