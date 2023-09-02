@@ -195,7 +195,7 @@ jQuery(function () {
                         duration: duration
                         , easing: "easeOutCubic"
                         , step: function (now, fx) {
-                            if ("right" == fx.prop) {
+                            if ("right" === fx.prop) {
                                 $hero_collection.css("right", now);
                                 $hero_carousel.data("owl.carousel").refresh(true);
                             }
@@ -490,7 +490,9 @@ function validatePhone(phone){
             fetch(`https://api.apilayer.com/number_verification/validate?number=${reformattedPhone}`, requestOptions)
               .then(res => res.json())
               .then(data => {
+                  console.log('true')
                   console.log(data)
+
               })
         }catch(err){
             console.error(err)
