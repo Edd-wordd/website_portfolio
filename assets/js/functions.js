@@ -321,39 +321,6 @@ jQuery(function () {
 
 });
 
-// // Contact Form
-//     var form = $('.contact__form'),
-//         message = $('.contact__msg'),
-//         form_data;
-//     // success function
-//     function done_func(response) {
-//         message.fadeIn().removeClass('alert-danger').addClass('alert-success');
-//         message.text(response);
-//         setTimeout(function () {
-//             message.fadeOut();
-//         }, 2000);
-//         form.find('input:not([type="submit"]), textarea').val('');
-//     }
-//     // fail function
-//     function fail_func(data) {
-//         message.fadeIn().removeClass('alert-success').addClass('alert-success');
-//         message.text(data.responseText);
-//         setTimeout(function () {
-//             message.fadeOut();
-//         }, 2000);
-//     }
-//     form.submit(function (e) {
-//         e.preventDefault();
-//         form_data = $(this).serialize();
-//         $.ajax({
-//             type: 'POST',
-//             url: form.attr('action'),
-//             data: form_data
-//         })
-//         .done(done_func)
-//         .fail(fail_func);
-//     });
-
 // function to display current year on the footer
 document.addEventListener('DOMContentLoaded', function() {
     let  currentYear = new Date().getFullYear();
@@ -382,33 +349,34 @@ function validateWithoutRegex(input){
 }
 
 // function to validate contact form on the contact page
-function validateForm() {
+async function handleSubmit() {
     const fullNameRegex = /^[a-zA-Z'-]{2,20}(?:\s[a-zA-Z'-]{2,20}){1,2}$/;
-    // const phoneRegex = /^([0-9]{3} ?){2}[0-9]{4}$/;
-    // const emailRegex = /^([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63})$/;
+    let isValidEmail, isValidPhone;
+    let isValid = true;
 
 
-    validateEmail(document.getElementById("email").value);
-    validatePhone(document.getElementById("phone").value);
-
+    try {
+        isValidEmail = await validateEmail(document.getElementById("email").value);
+        // Wait for 1 second before proceeding to the next API call
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        isValidPhone = await validatePhone(document.getElementById("phone").value);
+    } catch (error) {
+        console.error("An error occurred:", error);
+        isValid = false;
+    }
     let userInputs = {
         name: getValue("name"),
-        // phone: getValue("phone"),
-        // email: getValue("email"),
         subject: getValue("subject"),
         message: getValue("message")
     }
 
     userInputs.name = validateRegex(userInputs.name, fullNameRegex)
-    // userInputs.phone = validateRegex(userInputs.phone, phoneRegex);
-    // userInputs.email = validateRegex(userInputs.email, emailRegex);
     userInputs.subject = validateWithoutRegex(userInputs.subject);
     userInputs.message = validateWithoutRegex(userInputs.message);
 
     console.log('userInputs', userInputs);
 
     let message = $('.contact__msg');
-    let isValid = true;
     let invalidInputs = [];
 
     Object.entries(userInputs).forEach(([key, value]) => {
@@ -418,17 +386,20 @@ function validateForm() {
         }
     });
 
-    if(isValid) {
-        message.text(`Thank you for your message. I will get back to you shortly`);
+    if (isValid && isValidEmail && isValidPhone) {
+        message.text(`Thank you for your message. I will get back to you shortly.`);
         message.removeClass('alert-danger').addClass('alert-success');
-        setTimeout(function () {
+        setTimeout(() => {
             message.fadeOut();
         }, 3000);
-    } else {
+    }
+    if(!isValid || !isValidEmail || !isValidPhone) {
         let fields = invalidInputs.join(', ');
+        if (!isValidEmail) fields += ', email';
+        if (!isValidPhone) fields += ', phone';
         message.text(`Please fill out the following fields: ${fields.toLocaleUpperCase()}`);
         message.removeClass('alert-success').addClass('alert-danger');
-        setTimeout(function () {
+        setTimeout(() => {
             message.fadeOut();
         }, 3000);
 
@@ -440,152 +411,50 @@ function validateForm() {
 
     message.fadeIn();
 
-
 }
 
-//function to validate email with regex and api call
-// function validateEmail(email){
-//     const emailRegex = /^([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63})$/;
-//
-//     const myHeaders = new Headers();
-//     myHeaders.append('apikey', 'yek5T9dPdTYrbbGWJoq57iWgg3NbZlL8');
-//
-//     let requestOptions = {
-//         method: 'GET',
-//         redirect: 'follow',
-//         headers: myHeaders
-//     }
-//
-//     if(email.trim().match(emailRegex)){
-//         try{
-//            fetch(`https://api.apilayer.com/email_verification/check?email=${email}`,requestOptions)
-//              .then(res => res.json())
-//              .then(data => {
-//                  console.log(data);
-//                  console.log(data.smtp_check)
-//              })
-//         }
-//         catch(error){
-//             console.error(error);
-//         }
-//     }
-// }
-
-
-function validatePhone(phone){
+async function validatePhone(phone){
     const phoneRegex = /^([0-9]{3} ?){2}[0-9]{4}$/;
-    let reformattedPhone = '+1' + phone
+    let reformattedPhone = '+1' + phone;
 
-    const myHeaders = new Headers()
-    myHeaders.append('apikey', 'yek5T9dPdTYrbbGWJoq57iWgg3NbZlL8')
-
-    let requestOptions = {
-        method: "GET",
-        redirect: "follow",
-        headers: myHeaders
+    if(!phone.trim().match(phoneRegex)){
+        console.error('Invalid phone format.');
+        return false;
     }
 
-    if(phone.trim().match(phoneRegex))    {
-        try{
-            fetch(`https://api.apilayer.com/number_verification/validate?number=${reformattedPhone}`, requestOptions)
-              .then(res => res.json())
-              .then(data => {
-                  console.log(data)
-                  console.log(data.valid)
+    // const apiKey = 'api_key=52abd12ed12941aba5bfbb144add14fd';
+    const apiKey = 'api_key=7a0bd34f5bfd49beace2fbf794347d24';
 
-
-              })
-        }catch(err){
-            console.error(err)
+    try {
+        const res = await fetch(`https://phonevalidation.abstractapi.com/v1/?${apiKey}&phone=${reformattedPhone}`);
+        if (!res.ok) {
+            if (res.status === 405) {
+                console.error('Method Not Allowed: The requested HTTP method is not supported.');
+            } else if (res.status === 404) {
+                console.error('Not Found: The requested resource could not be found.');
+            } else if (res.status === 429) {
+                console.error('Rate Limit Reached: Too many requests.');
+            } else {
+                console.error('An error occurred:', res.statusText);
+            }
+            return false;
         }
-}
-}
 
-// function validateEmail(email) {
-//     const emailRegex = /^([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63})$/;
-//
-//     const myHeaders = new Headers();
-//     myHeaders.append('apikey', 'yek5T9dPdTYrbbGWJoq57iWgg3NbZlL8');
-//
-//     let requestOptions = {
-//         method: 'GET',
-//         redirect: 'follow',
-//         headers: myHeaders
-//     };
-//
-//     if (email.trim().match(emailRegex)) {
-//         fetch(`https://api.apilayer.com/email_verification/check?email=${email}`, requestOptions)
-//           .then(res => {
-//               if (!res.ok) {
-//                   throw new Error(res.status);
-//               }
-//               return res.json();
-//           })
-//           .then(data => {
-//               console.log(data);
-//               console.log(data.smtp_check);
-//               return data.smtp_check;
-//           })
-//           .catch(error => {
-//               if (error.message === '405') {
-//                   console.error('Method Not Allowed: The requested HTTP method is not supported.');
-//               } else if (error.message === '404') {
-//                   console.error('Not Found: The requested resource could not be found.');
-//               } else {
-//                   console.error('An error occurred during the API request:', error.message);
-//               }
-//           })
-//           .catch(error => {
-//               console.error('Network error occurred:', error);
-//           });
-//     } else {
-//         console.error('Invalid email format.');
-//     }
-//
-//
-// }
-// async function validateEmail(email) {
-//     // const emailRegex = /^([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63})$/;
-//     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-//
-//     if (!email.trim().match(emailRegex)) {
-//         console.error('Invalid email format.');
-//         return false;
-//     }
-//
-//     const myHeaders = new Headers();
-//     myHeaders.append('apikey', '2d0b8346501d4f759286087960b07494');
-//
-//     let requestOptions = {
-//         method: 'GET',
-//         headers: myHeaders
-//     };
-//
-// const apiKey = 'api_key=2d0b8346501d4f759286087960b07494';
-//     try {
-//         // const res = await fetch(`https://api.apilayer.com/email_verification/check?email=${email}`, requestOptions)
-//         const res = await fetch(`https://emailvalidation.abstractapi.com/v1/&email=${email}`, requestOptions)
-//
-//         if (!res.ok) {
-//             throw new Error(res.status.toString());
-//         }
-//
-//         const data = await res.json();
-//         console.log(data);
-//
-//         return data.smtp_check;
-//     } catch (error) {
-//         if (error.message === '405') {
-//             console.error('Method Not Allowed: The requested HTTP method is not supported.');
-//         } else if (error.message === '404') {
-//             console.error('Not Found: The requested resource could not be found.');
-//         } else {
-//             console.error('An error occurred during the API request:', error.message);
-//         }
-//
-//         return false;
-//     }
-// }
+        const data = await res.json();
+        console.log(data);
+
+        if (data.valid !== undefined) {
+            console.log(data.valid);
+            return data.valid;
+        } else {
+            console.error('Unexpected response structure.');
+            return false;
+        }
+    } catch (error) {
+        console.error('An unexpected error occurred during the API request:', error.message);
+        return false;
+    }
+}
 
 async function validateEmail(email) {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -595,15 +464,10 @@ async function validateEmail(email) {
         return false;
     }
 
-    const apiKey = 'api_key=2d0b8346501d4f759286087960b07494';
-
+    // const apiKey = 'api_key=2d0b8346501d4f759286087960b07494';
+    const apiKey = 'api_key=3c738939ec6147eea877897cead10d29';
     try {
         const res = await fetch(`https://emailvalidation.abstractapi.com/v1/?${apiKey}&email=${email}`)
-
-        if (!res.ok) {
-            throw new Error(`HTTP error! status: ${res.status}`);
-        }
-
 
         if (!res.ok) {
             // Directly handle the status codes without converting to string
@@ -619,10 +483,11 @@ async function validateEmail(email) {
 
         const data = await res.json();
         console.log(data);
-
-        return data.smtp_check;
+        console.log(data.is_smtp_valid.value);
+        return data.is_smtp_valid.value;
     } catch (error) {
         console.error('An unexpected error occurred during the API request:', error.message);
         return false;
     }
 }
+
