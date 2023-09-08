@@ -444,12 +444,12 @@ input[type="submit"] {
     margin: 0;
     position: relative;
 }
-.alert-success {
-    background: transparent;
-    color: #888;
-    border: 1px solid #F68338;
-    border-radius: 0px;
-}
+/*.alert-success {*/
+/*    background: transparent;*/
+/*    color: #888;*/
+/*    border: 1px solid #F68338;*/
+/*    border-radius: 0px;*/
+/*}*/
 /* placeholder */
 ::-webkit-input-placeholder {
     color: #888;

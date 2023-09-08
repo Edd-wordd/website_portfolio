@@ -388,8 +388,8 @@ function validateForm() {
     // const emailRegex = /^([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63})$/;
 
 
-    validateEmail(document.getElementById("email").value);
-    validatePhone(document.getElementById("phone").value);
+    validateEmail(document.getElementById("email").value)
+    validatePhone(document.getElementById("phone").value)
 
     let userInputs = {
         name: getValue("name"),
@@ -418,13 +418,15 @@ function validateForm() {
         }
     });
 
-    if(isValid) {
-        message.text(`Thank you for your message. I will get back to you shortly`);
+    if(isValid && validateEmail && validatePhone) {
+        message.text(`Thank you for your message. I will get back to you shortly ONYX ONYX`);
         message.removeClass('alert-danger').addClass('alert-success');
         setTimeout(function () {
             message.fadeOut();
         }, 3000);
-    } else {
+    }
+
+    if(!isValid || !validateEmail || !validatePhone) {
         let fields = invalidInputs.join(', ');
         message.text(`Please fill out the following fields: ${fields.toLocaleUpperCase()}`);
         message.removeClass('alert-success').addClass('alert-danger');
@@ -472,7 +474,7 @@ function validateForm() {
 // }
 
 
-function validatePhone(phone){
+async function validatePhone(phone){
     const phoneRegex = /^([0-9]{3} ?){2}[0-9]{4}$/;
     let reformattedPhone = '+1' + phone
 
@@ -487,59 +489,142 @@ function validatePhone(phone){
 
     if(phone.trim().match(phoneRegex))    {
         try{
-            fetch(`https://api.apilayer.com/number_verification/validate?number=${reformattedPhone}`, requestOptions)
+           await fetch(`https://api.apilayer.com/number_verification/validate?number=${reformattedPhone}`, requestOptions)
               .then(res => res.json())
               .then(data => {
-                  console.log('true')
                   console.log(data)
-
+                  console.log(data.valid)
+                  return data.valid
               })
         }catch(err){
             console.error(err)
+            return false
         }
 }
 }
 
-function validateEmail(email) {
-    const emailRegex = /^([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63})$/;
 
-    const myHeaders = new Headers();
-    myHeaders.append('apikey', 'yek5T9dPdTYrbbGWJoq57iWgg3NbZlL8');
+async function validateEmail(email) {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-    let requestOptions = {
-        method: 'GET',
-        redirect: 'follow',
-        headers: myHeaders
-    };
-
-    if (email.trim().match(emailRegex)) {
-        fetch(`https://api.apilayer.com/email_verification/check?email=${email}`, requestOptions)
-          .then(res => {
-              if (!res.ok) {
-                  throw new Error(res.status);
-              }
-              return res.json();
-          })
-          .then(data => {
-              console.log(data);
-              console.log(data.smtp_check);
-              return data.smtp_check;
-          })
-          .catch(error => {
-              if (error.message === '405') {
-                  console.error('Method Not Allowed: The requested HTTP method is not supported.');
-              } else if (error.message === '404') {
-                  console.error('Not Found: The requested resource could not be found.');
-              } else {
-                  console.error('An error occurred during the API request:', error.message);
-              }
-          })
-          .catch(error => {
-              console.error('Network error occurred:', error);
-          });
-    } else {
+    if (!email.trim().match(emailRegex)) {
         console.error('Invalid email format.');
+        return false;
     }
 
+    const apiKey = 'api_key=2d0b8346501d4f759286087960b07494';
 
+    try {
+        const res = await fetch(`https://emailvalidation.abstractapi.com/v1/?${apiKey}&email=${email}`)
+
+        // if (!res.ok) {
+        //     throw new Error(`HTTP error! status: ${res.status}`);
+        // }
+
+        if (!res.ok) {
+            // Directly handle the status codes without converting to string
+            if (res.status === 405) {
+                console.error('Method Not Allowed: The requested HTTP method is not supported.');
+            } else if (res.status === 404) {
+                console.error('Not Found: The requested resource could not be found.');
+            } else {
+                console.error('An error occurred:', res.statusText);
+            }
+            return false;
+        }
+
+        const data = await res.json();
+        console.log(data);
+        console.log(data.is_smtp_valid.value);
+        return data.is_smtp_valid.value;
+    } catch (error) {
+        console.error('An unexpected error occurred during the API request:', error.message);
+        return false;
+    }
 }
+
+// function validateEmail(email) {
+//     const emailRegex = /^([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63})$/;
+//
+//     const myHeaders = new Headers();
+//     myHeaders.append('apikey', 'yek5T9dPdTYrbbGWJoq57iWgg3NbZlL8');
+//
+//     let requestOptions = {
+//         method: 'GET',
+//         redirect: 'follow',
+//         headers: myHeaders
+//     };
+//
+//     if (email.trim().match(emailRegex)) {
+//         fetch(`https://api.apilayer.com/email_verification/check?email=${email}`, requestOptions)
+//           .then(res => {
+//               if (!res.ok) {
+//                   throw new Error(res.status);
+//               }
+//               return res.json();
+//           })
+//           .then(data => {
+//               console.log(data);
+//               console.log(data.smtp_check);
+//               return data.smtp_check;
+//           })
+//           .catch(error => {
+//               if (error.message === '405') {
+//                   console.error('Method Not Allowed: The requested HTTP method is not supported.');
+//               } else if (error.message === '404') {
+//                   console.error('Not Found: The requested resource could not be found.');
+//               } else {
+//                   console.error('An error occurred during the API request:', error.message);
+//               }
+//           })
+//           .catch(error => {
+//               console.error('Network error occurred:', error);
+//           });
+//     } else {
+//         console.error('Invalid email format.');
+//     }
+//
+//
+// }
+// async function validateEmail(email) {
+//     // const emailRegex = /^([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63})$/;
+//     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+//
+//     if (!email.trim().match(emailRegex)) {
+//         console.error('Invalid email format.');
+//         return false;
+//     }
+//
+//     const myHeaders = new Headers();
+//     myHeaders.append('apikey', '2d0b8346501d4f759286087960b07494');
+//
+//     let requestOptions = {
+//         method: 'GET',
+//         headers: myHeaders
+//     };
+//
+// const apiKey = 'api_key=2d0b8346501d4f759286087960b07494';
+//     try {
+//         // const res = await fetch(`https://api.apilayer.com/email_verification/check?email=${email}`, requestOptions)
+//         const res = await fetch(`https://emailvalidation.abstractapi.com/v1/&email=${email}`, requestOptions)
+//
+//         if (!res.ok) {
+//             throw new Error(res.status.toString());
+//         }
+//
+//         const data = await res.json();
+//         console.log(data);
+//
+//         return data.smtp_check;
+//     } catch (error) {
+//         if (error.message === '405') {
+//             console.error('Method Not Allowed: The requested HTTP method is not supported.');
+//         } else if (error.message === '404') {
+//             console.error('Not Found: The requested resource could not be found.');
+//         } else {
+//             console.error('An error occurred during the API request:', error.message);
+//         }
+//
+//         return false;
+//     }
+// }
