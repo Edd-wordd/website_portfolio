@@ -347,13 +347,21 @@ function validateRegex(input, regex){
 function validateWithoutRegex(input){
     return input.length > 0 ? input : '';
 }
+// helper function to clear the input fields
+function clearInputFields(fieldIds) {
+    fieldIds.forEach((id) => {
+        document.getElementById(id).value = '';
+    });
+}
 
 // function to validate contact form on the contact page
 async function handleSubmit() {
+    // disable the submit button to prevent multiple clicks
+    document.getElementById("submit").disabled = true;
+
     const fullNameRegex = /^[a-zA-Z'-]{2,20}(?:\s[a-zA-Z'-]{2,20}){1,2}$/;
     let isValidEmail, isValidPhone;
     let isValid = true;
-
 
     try {
         isValidEmail = await validateEmail(document.getElementById("email").value);
@@ -392,8 +400,9 @@ async function handleSubmit() {
         setTimeout(() => {
             message.fadeOut();
         }, 3000);
-    }
-    if(!isValid || !isValidEmail || !isValidPhone) {
+        // Clear all the input fields, including the submit button
+        clearInputFields(['name', 'email', 'phone', 'subject', 'message', 'submit']);
+    } else {
         let fields = invalidInputs.join(', ');
         if (!isValidEmail) fields += ', email';
         if (!isValidPhone) fields += ', phone';
@@ -402,11 +411,12 @@ async function handleSubmit() {
         setTimeout(() => {
             message.fadeOut();
         }, 3000);
-
         // Clear only the invalid inputs
         invalidInputs.forEach(id => {
             document.getElementById(id).value = '';
         });
+        // Enable the submit button
+        document.getElementById("submit").disabled = false;
     }
 
     message.fadeIn();
@@ -439,7 +449,6 @@ async function validatePhone(phone){
             }
             return false;
         }
-
         const data = await res.json();
         console.log(data);
 
