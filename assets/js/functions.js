@@ -353,7 +353,6 @@ function clearInputFields(fieldIds) {
     });
 }
 
-// function to validate contact form on the contact page
 async function handleSubmit() {
     // disable the submit button to prevent multiple clicks
     document.getElementById("submit").disabled = true;
@@ -430,77 +429,34 @@ async function handleSubmit() {
 }
 
 async function validatePhone(phone){
-    const phoneRegex = /^([0-9]{3} ?){2}[0-9]{4}$/;
-    let reformattedPhone = '+1' + phone;
+    try{
+        const response = await fetch(`http://localhost:3001/validatePhone?phone=${phone}`);
 
-    if(!phone.trim().match(phoneRegex)){
-        console.error('Invalid phone format.');
-        return false;
-    }
-
-    const apiKey = 'api_key=7a0bd34f5bfd49beace2fbf794347d24';
-
-    try {
-        const res = await fetch(`https://phonevalidation.abstractapi.com/v1/?${apiKey}&phone=${reformattedPhone}`);
-        if (!res.ok) {
-            if (res.status === 405) {
-                console.error('Method Not Allowed: The requested HTTP method is not supported.');
-            } else if (res.status === 404) {
-                console.error('Not Found: The requested resource could not be found.');
-            } else if (res.status === 429) {
-                console.error('Rate Limit Reached: Too many requests.');
-            } else {
-                console.error('An error occurred:', res.statusText);
-            }
+        if(!response.ok){
+            console.error('Server responded with an error:', response.status);
             return false;
         }
-        const data = await res.json();
-        console.log(data);
+        const data = await response.json();
+        return data.valid;
 
-        if (data.valid !== undefined) {
-            console.log(data.valid);
-            return data.valid;
-        } else {
-            console.error('Unexpected response structure.');
-            return false;
-        }
-    } catch (error) {
-        console.error('An unexpected error occurred during the API request:', error.message);
+    }catch{
+        console.error('An error occurred:', error);
         return false;
     }
 }
-
 async function validateEmail(email) {
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
-    if (!email.trim().match(emailRegex)) {
-        console.error('Invalid email format.');
-        return false;
-    }
-
-    const apiKey = 'api_key=3c738939ec6147eea877897cead10d29';
     try {
-        const res = await fetch(`https://emailvalidation.abstractapi.com/v1/?${apiKey}&email=${email}`)
+        const response = await fetch(`http://localhost:3001/validateEmail?email=${email}`);
 
-        if (!res.ok) {
-            // Directly handle the status codes without converting to string
-            if (res.status === 405) {
-                console.error('Method Not Allowed: The requested HTTP method is not supported.');
-            } else if (res.status === 404) {
-                console.error('Not Found: The requested resource could not be found.');
-            } else {
-                console.error('An error occurred:', res.statusText);
-            }
+        if (!response.ok) {
+            console.error('Server responded with an error:', response.status);
             return false;
         }
 
-        const data = await res.json();
-        console.log(data);
-        console.log(data.is_smtp_valid.value);
-        return data.is_smtp_valid.value;
+        const data = await response.json();
+        return data.is_smtp_valid;
     } catch (error) {
-        console.error('An unexpected error occurred during the API request:', error.message);
+        console.error('An error occurred:', error);
         return false;
     }
 }
-
