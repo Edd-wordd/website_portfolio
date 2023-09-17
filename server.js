@@ -10,9 +10,48 @@ import('node-fetch').then(module => {
 
 
 const app = express();
+const port = 3001
 
 app.use(cors())
-app.use(bodyParser.json())
+app.use(bodyParser.json());
+
+
+app.use(express.static('public'));
+app.get('/contact.html', (res, req) => {
+  res.sendfile(__dirname + 'contact.html')
+})
+app.get('/', (res, req) => {
+  res.sendfile(__dirname + 'index.html')
+})
+app.get('/resume.html', (res, req) => {
+  res.sendfile(__dirname + 'resume.html')
+})
+app.get('/portfolio.html', (res, req) => {
+  res.sendfile(__dirname + 'portfolio.html')
+})
+app.get('/blog.html', (res, req) => {
+  res.sendfile(__dirname + 'blog.html')
+})
+app.get('/ionnovate.html', (res, req) => {
+  res.sendfile(__dirname + 'ionnovate.html')
+})
+app.get('/monatech.html', (res, req) => {
+  res.sendfile(__dirname + 'monatech.html')
+})
+app.get('/post.html', (res, req) => {
+  res.sendfile(__dirname + 'post.html')
+})
+app.get('/projects.html', (res, req) => {
+  res.sendfile(__dirname + 'projects.html')
+})
+app.get('/rcn.html', (res, req) => {
+  res.sendfile(__dirname + 'rcn.html')
+})
+app.get('/recipe.html', (res, req) => {
+  res.sendfile(__dirname + 'recipe.html')
+})
+
+
 
 app.post('/api/forma', async (req, res) => {
   const { name, subject, email, message, phone } = req.body;
@@ -130,8 +169,8 @@ app.get('/validatePhone', async (req, res) => {
   }
 });
 
-app.listen(3001, () => {
-  console.log('Server running on http://localhost:3001');
+app.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
 });
 
 
