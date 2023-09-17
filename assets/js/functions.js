@@ -374,7 +374,9 @@ async function handleSubmit() {
     let userInputs = {
         name: getValue("name"),
         subject: getValue("subject"),
-        message: getValue("message")
+        message: getValue("message"),
+        email: document.getElementById("email").value,
+        phone: document.getElementById("phone").value
     }
 
     userInputs.name = validateRegex(userInputs.name, fullNameRegex)
@@ -394,28 +396,33 @@ async function handleSubmit() {
     });
 
     if (isValid && isValidEmail && isValidPhone) {
-        message.text(`Thank you for your message. I will get back to you shortly.`);
-        message.removeClass('alert-danger').addClass('alert-success');
-        setTimeout(() => {
-            message.fadeOut();
-        }, 3000);
-        // Clear all the input fields, including the submit button
-        clearInputFields(['name', 'email', 'phone', 'subject', 'message', 'submit']);
-    } else {
-        let fields = invalidInputs.join(', ');
-        if (!isValidEmail) fields += ', email';
-        if (!isValidPhone) fields += ', phone';
-        message.text(`Please fill out the following fields: ${fields.toLocaleUpperCase()}`);
-        message.removeClass('alert-success').addClass('alert-danger');
-        setTimeout(() => {
-            message.fadeOut();
-        }, 3000);
-        // Clear only the invalid inputs
-        invalidInputs.forEach(id => {
-            document.getElementById(id).value = '';
-        });
-        // Enable the submit button
-        document.getElementById("submit").disabled = false;
+        userInputs.email = document.getElementById("email").value;
+        userInputs.phone = document.getElementById("phone").value;
+        // Post data to the server
+        fetch('http://localhost:3001/api/forma', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(userInputs)
+        })
+          .then(response => response.json())
+          .then(data => {
+              message.text(`Thank you for your message. I will get back to you shortly.`);
+              message.removeClass('alert-danger').addClass('alert-success');
+              setTimeout(() => {
+                  message.fadeOut();
+              }, 3000);
+              clearInputFields(['name', 'email', 'phone', 'subject', 'message', 'submit']);
+          })
+          .catch(error => {
+              console.error('Error sending email:', error);
+              message.text('Failed to send email. Please try again.');
+              message.removeClass('alert-success').addClass('alert-danger');
+              setTimeout(() => {
+                  message.fadeOut();
+              }, 3000);
+          });
     }
 
     message.fadeIn();
@@ -431,7 +438,6 @@ async function validatePhone(phone){
         return false;
     }
 
-    // const apiKey = 'api_key=52abd12ed12941aba5bfbb144add14fd';
     const apiKey = 'api_key=7a0bd34f5bfd49beace2fbf794347d24';
 
     try {
@@ -472,7 +478,6 @@ async function validateEmail(email) {
         return false;
     }
 
-    // const apiKey = 'api_key=2d0b8346501d4f759286087960b07494';
     const apiKey = 'api_key=3c738939ec6147eea877897cead10d29';
     try {
         const res = await fetch(`https://emailvalidation.abstractapi.com/v1/?${apiKey}&email=${email}`)
