@@ -3,15 +3,16 @@
  */
 jQuery(function () {
     "use strict";
-    var screen_has_mouse = false
-        , $body = jQuery("body")
-        , $logo = jQuery("#identity")
-        , $social_links = jQuery("#social-profiles")
-        , $menu = jQuery("#site-menu")
-        , $content_wrap = jQuery(".content-wrap")
-        , $hero_media = jQuery(".hero-media")
-        , $hero_carousel = jQuery(".hero-media .owl-carousel")
-        , win_width = jQuery(window).width();
+    let screen_has_mouse = false
+      , $body = jQuery('body')
+      , $logo = jQuery('#identity')
+      , $social_links = jQuery('#social-profiles')
+      , $menu = jQuery('#site-menu')
+      , $content_wrap = jQuery('.content-wrap')
+      , $hero_media = jQuery('.hero-media')
+      , $hero_carousel = jQuery('.hero-media .owl-carousel')
+      , win_width = jQuery(window).width()
+
     // Simple way of determining if user is using a mouse device.
     function themeMouseMove() {
         screen_has_mouse = true;
@@ -56,7 +57,7 @@ jQuery(function () {
         e.preventDefault();
     });
     jQuery("#site-menu .menu-expand").on("click.mccan", function (e) {
-        var $parent = jQuery(this).parent();
+        const $parent = jQuery(this).parent()
         if (jQuery(".site-menu-toggle").is(":visible")) {
             $parent.toggleClass("collapse");
         }
@@ -78,7 +79,7 @@ jQuery(function () {
     if (jQuery("html").hasClass("touchevents")) {
         jQuery("#site-menu li.menu-item-has-children > a:not(.menu-expand)").on("click.mccan", function (e) {
             if (!screen_has_mouse && !window.navigator.msPointerEnabled && !jQuery(".site-menu-toggle").is(":visible")) {
-                var $parent = jQuery(this).parent();
+                const $parent = jQuery(this).parent()
                 if (!$parent.parents(".hover").length) {
                     jQuery("#site-menu li.menu-item-has-children").not($parent).removeClass("hover");
                 }
@@ -91,7 +92,7 @@ jQuery(function () {
         // Toggle visibility of dropdowns on keyboard focus events.
         jQuery("#site-menu li > a:not(.menu-expand), #top .site-title a, #social-links-menu a:first").on("focus.mccan blur.mccan", function (e) {
             if (screen_has_mouse && !jQuery("#top .site-menu-toggle").is(":visible")) {
-                var $parent = jQuery(this).parent();
+                const $parent = jQuery(this).parent()
                 if (!$parent.parents(".hover").length) {
                     jQuery("#site-menu .menu-item-has-children.hover").not($parent).removeClass("hover");
                 }
@@ -104,39 +105,38 @@ jQuery(function () {
     }
     // Handle custom my info.
     jQuery(".my-info .field > a").on("click.mccan", function (e) {
-        var $field = jQuery(this).parent();
+        const $field = jQuery(this).parent()
         $field.toggleClass("show-dropdown").siblings().removeClass("show-dropdown");
         e.preventDefault();
     });
     jQuery(".my-info .dropdown .values a").on("click.mccan", function (e) {
         jQuery(this).parent().addClass("selected").siblings().removeClass("selected");
-        var $field = jQuery(this).parents(".field");
+        const $field = jQuery(this).parents('.field')
         jQuery("input[type=hidden]", $field).val(jQuery(this).data("value"));
         jQuery("span.field-value", $field).html(jQuery(this).html());
         e.preventDefault();
     });
     if (jQuery.fn.owlCarousel) {
-        var multiple_items = jQuery(".item", $hero_carousel).length > 1
-            , prev_video_active;
+        let multiple_items = jQuery('.item', $hero_carousel).length > 1
+          , prev_video_active
         if (!multiple_items) {
             jQuery(".my-info").addClass("full-width");
         }
-        var onTranslate = function (event) {
-                jQuery("video", event.target).each(function () {
-                    this.pause();
-                });
+        const onTranslate = function(event) {
+            jQuery('video', event.target).each(function() {
+                this.pause()
+            })
+        }
+          , onTranslated = function(event) {
+            jQuery('.owl-item.active video', event.target).each(function() {
+                this.play()
+            })
+            if (jQuery('.owl-item.active .light-hero-colors', event.target).length > 0) {
+                $body.addClass('light-hero-colors')
+            } else {
+                $body.removeClass('light-hero-colors')
             }
-            , onTranslated = function (event) {
-                jQuery(".owl-item.active video", event.target).each(function () {
-                    this.play();
-                });
-                if (jQuery(".owl-item.active .light-hero-colors", event.target).length > 0) {
-                    $body.addClass("light-hero-colors");
-                }
-                else {
-                    $body.removeClass("light-hero-colors");
-                }
-            };
+        }
         $hero_carousel.owlCarousel({
             items: 1
             , loop: multiple_items
@@ -162,9 +162,9 @@ jQuery(function () {
                     if ($body.hasClass("expanded-hero-start")) {
                         return;
                     }
-                    var initialAttribs, finalAttribs, completed = 0
-                        , duration = $hero_carousel.data("expand-duration")
-                        , $hero_collection = $hero_media.add($hero_carousel);
+                    let initialAttribs, finalAttribs, completed = 0
+                      , duration = $hero_carousel.data('expand-duration')
+                      , $hero_collection = $hero_media.add($hero_carousel)
                     if (isNaN(duration)) {
                         duration = 1000;
                     }
@@ -218,15 +218,15 @@ jQuery(function () {
                         }
                     });
                     if (!$body.hasClass("cv")) {
-                        var $nav_buttons = jQuery(this).add(jQuery(this).prev(".owl-nav"));
+                        const $nav_buttons = jQuery(this).add(jQuery(this).prev('.owl-nav'))
                         $nav_buttons.animate({
                             "bottom": (-jQuery(this).outerHeight())
                         }, {
                             duration: duration / 2
                             , complete: function () {
-                                var $nav = jQuery(".owl-nav", $hero_carousel)
-                                    , $expand = jQuery(".owl-expand", $hero_carousel)
-                                    , right_expand;
+                                let $nav = jQuery('.owl-nav', $hero_carousel)
+                                  , $expand = jQuery('.owl-expand', $hero_carousel)
+                                  , right_expand
                                 if ($body.hasClass("expanded-hero")) {
                                     $nav.css({
                                         "right": 0
@@ -265,7 +265,7 @@ jQuery(function () {
                 jQuery(".owl-stage", event.target).on("dblclick.mccan", function (e) {
                     $hero_carousel.find(".owl-expand:visible").trigger("click.mccan");
                 });
-                var tapedTwice = false;
+                let tapedTwice = false
                 jQuery(".owl-stage", event.target).on("touchstart.mccan", function (e) {
                     if (!tapedTwice) {
                         tapedTwice = true;
@@ -289,7 +289,7 @@ jQuery(function () {
     jQuery(window).on("resize", function () {
         win_width = jQuery(window).width();
         if ($body.hasClass("mobile-menu-opened")) {
-            var menu_pos = 0;
+            const menu_pos = 0
             if (win_width < 767) {
                 $menu.css({
                     top: $logo.position().top * 2 + $logo.outerHeight()
@@ -303,8 +303,8 @@ jQuery(function () {
         else {
             if ($body.hasClass("full-content")) {
                 $content_wrap.css("padding-top", "");
-                var contentTop = parseInt($content_wrap.css("padding-top"), 10)
-                    , logoHeight = jQuery(".logo", $logo).outerHeight() + $logo.offset().top * 2;
+                const contentTop = parseInt($content_wrap.css('padding-top'), 10)
+                  , logoHeight = jQuery('.logo', $logo).outerHeight() + $logo.offset().top * 2
                 if (logoHeight > contentTop) {
                     $content_wrap.css("padding-top", logoHeight);
                 }
@@ -323,8 +323,7 @@ jQuery(function () {
 
 // function to display current year on the footer
 document.addEventListener('DOMContentLoaded', function() {
-    let  currentYear = new Date().getFullYear();
-    document.getElementById("currentYear").textContent = currentYear;
+    document.getElementById("currentYear").textContent = new Date().getFullYear();
 });
 
 // function to download cv on the click of the button on home page
@@ -354,7 +353,6 @@ function clearInputFields(fieldIds) {
     });
 }
 
-// function to validate contact form on the contact page
 async function handleSubmit() {
     // disable the submit button to prevent multiple clicks
     document.getElementById("submit").disabled = true;
@@ -375,7 +373,9 @@ async function handleSubmit() {
     let userInputs = {
         name: getValue("name"),
         subject: getValue("subject"),
-        message: getValue("message")
+        message: getValue("message"),
+        email: document.getElementById("email").value,
+        phone: document.getElementById("phone").value
     }
 
     userInputs.name = validateRegex(userInputs.name, fullNameRegex)
@@ -395,28 +395,33 @@ async function handleSubmit() {
     });
 
     if (isValid && isValidEmail && isValidPhone) {
-        message.text(`Thank you for your message. I will get back to you shortly.`);
-        message.removeClass('alert-danger').addClass('alert-success');
-        setTimeout(() => {
-            message.fadeOut();
-        }, 3000);
-        // Clear all the input fields, including the submit button
-        clearInputFields(['name', 'email', 'phone', 'subject', 'message', 'submit']);
-    } else {
-        let fields = invalidInputs.join(', ');
-        if (!isValidEmail) fields += ', email';
-        if (!isValidPhone) fields += ', phone';
-        message.text(`Please fill out the following fields: ${fields.toLocaleUpperCase()}`);
-        message.removeClass('alert-success').addClass('alert-danger');
-        setTimeout(() => {
-            message.fadeOut();
-        }, 3000);
-        // Clear only the invalid inputs
-        invalidInputs.forEach(id => {
-            document.getElementById(id).value = '';
-        });
-        // Enable the submit button
-        document.getElementById("submit").disabled = false;
+        userInputs.email = document.getElementById("email").value;
+        userInputs.phone = document.getElementById("phone").value;
+        // Post data to the server
+        fetch('http://localhost:3001/api/forma', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(userInputs)
+        })
+          .then(response => response.json())
+          .then(data => {
+              message.text(`Thank you for your message. I will get back to you shortly.`);
+              message.removeClass('alert-danger').addClass('alert-success');
+              setTimeout(() => {
+                  message.fadeOut();
+              }, 3000);
+              clearInputFields(['name', 'email', 'phone', 'subject', 'message', 'submit']);
+          })
+          .catch(error => {
+              console.error('Error sending email:', error);
+              message.text('Failed to send email. Please try again.');
+              message.removeClass('alert-success').addClass('alert-danger');
+              setTimeout(() => {
+                  message.fadeOut();
+              }, 3000);
+          });
     }
 
     message.fadeIn();
@@ -424,79 +429,34 @@ async function handleSubmit() {
 }
 
 async function validatePhone(phone){
-    const phoneRegex = /^([0-9]{3} ?){2}[0-9]{4}$/;
-    let reformattedPhone = '+1' + phone;
+    try{
+        const response = await fetch(`http://localhost:3001/validatePhone?phone=${phone}`);
 
-    if(!phone.trim().match(phoneRegex)){
-        console.error('Invalid phone format.');
-        return false;
-    }
-
-    // const apiKey = 'api_key=52abd12ed12941aba5bfbb144add14fd';
-    const apiKey = 'api_key=7a0bd34f5bfd49beace2fbf794347d24';
-
-    try {
-        const res = await fetch(`https://phonevalidation.abstractapi.com/v1/?${apiKey}&phone=${reformattedPhone}`);
-        if (!res.ok) {
-            if (res.status === 405) {
-                console.error('Method Not Allowed: The requested HTTP method is not supported.');
-            } else if (res.status === 404) {
-                console.error('Not Found: The requested resource could not be found.');
-            } else if (res.status === 429) {
-                console.error('Rate Limit Reached: Too many requests.');
-            } else {
-                console.error('An error occurred:', res.statusText);
-            }
+        if(!response.ok){
+            console.error('Server responded with an error:', response.status);
             return false;
         }
-        const data = await res.json();
-        console.log(data);
+        const data = await response.json();
+        return data.valid;
 
-        if (data.valid !== undefined) {
-            console.log(data.valid);
-            return data.valid;
-        } else {
-            console.error('Unexpected response structure.');
-            return false;
-        }
-    } catch (error) {
-        console.error('An unexpected error occurred during the API request:', error.message);
+    }catch{
+        console.error('An error occurred:', error);
         return false;
     }
 }
-
 async function validateEmail(email) {
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
-    if (!email.trim().match(emailRegex)) {
-        console.error('Invalid email format.');
-        return false;
-    }
-
-    // const apiKey = 'api_key=2d0b8346501d4f759286087960b07494';
-    const apiKey = 'api_key=3c738939ec6147eea877897cead10d29';
     try {
-        const res = await fetch(`https://emailvalidation.abstractapi.com/v1/?${apiKey}&email=${email}`)
+        const response = await fetch(`http://localhost:3001/validateEmail?email=${email}`);
 
-        if (!res.ok) {
-            // Directly handle the status codes without converting to string
-            if (res.status === 405) {
-                console.error('Method Not Allowed: The requested HTTP method is not supported.');
-            } else if (res.status === 404) {
-                console.error('Not Found: The requested resource could not be found.');
-            } else {
-                console.error('An error occurred:', res.statusText);
-            }
+        if (!response.ok) {
+            console.error('Server responded with an error:', response.status);
             return false;
         }
 
-        const data = await res.json();
-        console.log(data);
-        console.log(data.is_smtp_valid.value);
-        return data.is_smtp_valid.value;
+        const data = await response.json();
+        return data.is_smtp_valid;
     } catch (error) {
-        console.error('An unexpected error occurred during the API request:', error.message);
+        console.error('An error occurred:', error);
         return false;
     }
 }
-
