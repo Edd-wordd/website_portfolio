@@ -3,15 +3,16 @@
  */
 jQuery(function () {
     "use strict";
-    var screen_has_mouse = false
-        , $body = jQuery("body")
-        , $logo = jQuery("#identity")
-        , $social_links = jQuery("#social-profiles")
-        , $menu = jQuery("#site-menu")
-        , $content_wrap = jQuery(".content-wrap")
-        , $hero_media = jQuery(".hero-media")
-        , $hero_carousel = jQuery(".hero-media .owl-carousel")
-        , win_width = jQuery(window).width();
+    let screen_has_mouse = false
+      , $body = jQuery('body')
+      , $logo = jQuery('#identity')
+      , $social_links = jQuery('#social-profiles')
+      , $menu = jQuery('#site-menu')
+      , $content_wrap = jQuery('.content-wrap')
+      , $hero_media = jQuery('.hero-media')
+      , $hero_carousel = jQuery('.hero-media .owl-carousel')
+      , win_width = jQuery(window).width()
+
     // Simple way of determining if user is using a mouse device.
     function themeMouseMove() {
         screen_has_mouse = true;
@@ -56,7 +57,7 @@ jQuery(function () {
         e.preventDefault();
     });
     jQuery("#site-menu .menu-expand").on("click.mccan", function (e) {
-        var $parent = jQuery(this).parent();
+        const $parent = jQuery(this).parent()
         if (jQuery(".site-menu-toggle").is(":visible")) {
             $parent.toggleClass("collapse");
         }
@@ -78,7 +79,7 @@ jQuery(function () {
     if (jQuery("html").hasClass("touchevents")) {
         jQuery("#site-menu li.menu-item-has-children > a:not(.menu-expand)").on("click.mccan", function (e) {
             if (!screen_has_mouse && !window.navigator.msPointerEnabled && !jQuery(".site-menu-toggle").is(":visible")) {
-                var $parent = jQuery(this).parent();
+                const $parent = jQuery(this).parent()
                 if (!$parent.parents(".hover").length) {
                     jQuery("#site-menu li.menu-item-has-children").not($parent).removeClass("hover");
                 }
@@ -91,7 +92,7 @@ jQuery(function () {
         // Toggle visibility of dropdowns on keyboard focus events.
         jQuery("#site-menu li > a:not(.menu-expand), #top .site-title a, #social-links-menu a:first").on("focus.mccan blur.mccan", function (e) {
             if (screen_has_mouse && !jQuery("#top .site-menu-toggle").is(":visible")) {
-                var $parent = jQuery(this).parent();
+                const $parent = jQuery(this).parent()
                 if (!$parent.parents(".hover").length) {
                     jQuery("#site-menu .menu-item-has-children.hover").not($parent).removeClass("hover");
                 }
@@ -104,39 +105,38 @@ jQuery(function () {
     }
     // Handle custom my info.
     jQuery(".my-info .field > a").on("click.mccan", function (e) {
-        var $field = jQuery(this).parent();
+        const $field = jQuery(this).parent()
         $field.toggleClass("show-dropdown").siblings().removeClass("show-dropdown");
         e.preventDefault();
     });
     jQuery(".my-info .dropdown .values a").on("click.mccan", function (e) {
         jQuery(this).parent().addClass("selected").siblings().removeClass("selected");
-        var $field = jQuery(this).parents(".field");
+        const $field = jQuery(this).parents('.field')
         jQuery("input[type=hidden]", $field).val(jQuery(this).data("value"));
         jQuery("span.field-value", $field).html(jQuery(this).html());
         e.preventDefault();
     });
     if (jQuery.fn.owlCarousel) {
-        var multiple_items = jQuery(".item", $hero_carousel).length > 1
-            , prev_video_active;
+        let multiple_items = jQuery('.item', $hero_carousel).length > 1
+          , prev_video_active
         if (!multiple_items) {
             jQuery(".my-info").addClass("full-width");
         }
-        var onTranslate = function (event) {
-                jQuery("video", event.target).each(function () {
-                    this.pause();
-                });
+        const onTranslate = function(event) {
+            jQuery('video', event.target).each(function() {
+                this.pause()
+            })
+        }
+          , onTranslated = function(event) {
+            jQuery('.owl-item.active video', event.target).each(function() {
+                this.play()
+            })
+            if (jQuery('.owl-item.active .light-hero-colors', event.target).length > 0) {
+                $body.addClass('light-hero-colors')
+            } else {
+                $body.removeClass('light-hero-colors')
             }
-            , onTranslated = function (event) {
-                jQuery(".owl-item.active video", event.target).each(function () {
-                    this.play();
-                });
-                if (jQuery(".owl-item.active .light-hero-colors", event.target).length > 0) {
-                    $body.addClass("light-hero-colors");
-                }
-                else {
-                    $body.removeClass("light-hero-colors");
-                }
-            };
+        }
         $hero_carousel.owlCarousel({
             items: 1
             , loop: multiple_items
@@ -162,9 +162,9 @@ jQuery(function () {
                     if ($body.hasClass("expanded-hero-start")) {
                         return;
                     }
-                    var initialAttribs, finalAttribs, completed = 0
-                        , duration = $hero_carousel.data("expand-duration")
-                        , $hero_collection = $hero_media.add($hero_carousel);
+                    let initialAttribs, finalAttribs, completed = 0
+                      , duration = $hero_carousel.data('expand-duration')
+                      , $hero_collection = $hero_media.add($hero_carousel)
                     if (isNaN(duration)) {
                         duration = 1000;
                     }
@@ -218,15 +218,15 @@ jQuery(function () {
                         }
                     });
                     if (!$body.hasClass("cv")) {
-                        var $nav_buttons = jQuery(this).add(jQuery(this).prev(".owl-nav"));
+                        const $nav_buttons = jQuery(this).add(jQuery(this).prev('.owl-nav'))
                         $nav_buttons.animate({
                             "bottom": (-jQuery(this).outerHeight())
                         }, {
                             duration: duration / 2
                             , complete: function () {
-                                var $nav = jQuery(".owl-nav", $hero_carousel)
-                                    , $expand = jQuery(".owl-expand", $hero_carousel)
-                                    , right_expand;
+                                let $nav = jQuery('.owl-nav', $hero_carousel)
+                                  , $expand = jQuery('.owl-expand', $hero_carousel)
+                                  , right_expand
                                 if ($body.hasClass("expanded-hero")) {
                                     $nav.css({
                                         "right": 0
@@ -265,7 +265,7 @@ jQuery(function () {
                 jQuery(".owl-stage", event.target).on("dblclick.mccan", function (e) {
                     $hero_carousel.find(".owl-expand:visible").trigger("click.mccan");
                 });
-                var tapedTwice = false;
+                let tapedTwice = false
                 jQuery(".owl-stage", event.target).on("touchstart.mccan", function (e) {
                     if (!tapedTwice) {
                         tapedTwice = true;
@@ -289,7 +289,7 @@ jQuery(function () {
     jQuery(window).on("resize", function () {
         win_width = jQuery(window).width();
         if ($body.hasClass("mobile-menu-opened")) {
-            var menu_pos = 0;
+            const menu_pos = 0
             if (win_width < 767) {
                 $menu.css({
                     top: $logo.position().top * 2 + $logo.outerHeight()
@@ -303,8 +303,8 @@ jQuery(function () {
         else {
             if ($body.hasClass("full-content")) {
                 $content_wrap.css("padding-top", "");
-                var contentTop = parseInt($content_wrap.css("padding-top"), 10)
-                    , logoHeight = jQuery(".logo", $logo).outerHeight() + $logo.offset().top * 2;
+                const contentTop = parseInt($content_wrap.css('padding-top'), 10)
+                  , logoHeight = jQuery('.logo', $logo).outerHeight() + $logo.offset().top * 2
                 if (logoHeight > contentTop) {
                     $content_wrap.css("padding-top", logoHeight);
                 }
@@ -323,8 +323,7 @@ jQuery(function () {
 
 // function to display current year on the footer
 document.addEventListener('DOMContentLoaded', function() {
-    let  currentYear = new Date().getFullYear();
-    document.getElementById("currentYear").textContent = currentYear;
+    document.getElementById("currentYear").textContent = new Date().getFullYear();
 });
 
 // function to download cv on the click of the button on home page
