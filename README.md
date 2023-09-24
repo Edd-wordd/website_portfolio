@@ -37,5 +37,5 @@ Give a ⭐️ if you like this project!
 
 ## 📫 Contact
 
-Your Name - [Email](mailto:your-edd_wordd@icloud.com) - [LinkedIn](https://www.linkedin.com/in/edward-plasencio/)
+Eddwordd - [Email](mailto:your-edd_wordd@icloud.com) - [LinkedIn](https://www.linkedin.com/in/edward-plasencio/)
 
