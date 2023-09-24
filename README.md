@@ -21,7 +21,7 @@ Welcome to my portfolio project! This project showcases my skills and projects u
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/your-username/Edd-wordd/website_portfolio
+   git clone https://github.com/Edd-wordd/website_portfolio
 
    ## 📝 License
 
