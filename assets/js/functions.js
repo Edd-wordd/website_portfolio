@@ -382,7 +382,7 @@ async function handleSubmit() {
     userInputs.subject = validateWithoutRegex(userInputs.subject);
     userInputs.message = validateWithoutRegex(userInputs.message);
 
-    console.log('userInputs', userInputs);
+    // console.log('userInputs', userInputs);
 
     let message = $('.contact__msg');
     let invalidInputs = [];
