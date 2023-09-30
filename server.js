@@ -8,7 +8,7 @@ import('node-fetch').then(module => {
   fetch = module.default;
 });
 
-
+const path = require('path');
 const app = express();
 const port = 3001
 
@@ -17,38 +17,42 @@ app.use(bodyParser.json());
 
 
 app.use(express.static('public'));
-app.get('/contact.html', (res, req) => {
-  res.sendfile(__dirname + 'contact.html')
+app.get('/contact', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'contact.html'));
+});
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+app.get('/resume', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'resume.html'));
+});
+
+app.get('/portfolio', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'portfolio.html'));
+});
+
+app.get('/blog', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'blog.html'));
+});
+
+app.get('/ionnovate', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'ionnovate.html'))
 })
-app.get('/', (res, req) => {
-  res.sendfile(__dirname + 'index.html')
+app.get('/monatech', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public',  'monatech.html'))
 })
-app.get('/resume.html', (res, req) => {
-  res.sendfile(__dirname + 'resume.html')
+app.get('/post', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'post.html'))
 })
-app.get('/portfolio.html', (res, req) => {
-  res.sendfile(__dirname + 'portfolio.html')
+app.get('/projects', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'projects.html'))
 })
-app.get('/blog.html', (res, req) => {
-  res.sendfile(__dirname + 'blog.html')
+app.get('/rcn', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'rcn.html'))
 })
-app.get('/ionnovate.html', (res, req) => {
-  res.sendfile(__dirname + 'ionnovate.html')
-})
-app.get('/monatech.html', (res, req) => {
-  res.sendfile(__dirname + 'monatech.html')
-})
-app.get('/post.html', (res, req) => {
-  res.sendfile(__dirname + 'post.html')
-})
-app.get('/projects.html', (res, req) => {
-  res.sendfile(__dirname + 'projects.html')
-})
-app.get('/rcn.html', (res, req) => {
-  res.sendfile(__dirname + 'rcn.html')
-})
-app.get('/recipe.html', (res, req) => {
-  res.sendfile(__dirname + 'recipe.html')
+app.get('/recipe.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'recipe.html'))
 })
 
 
