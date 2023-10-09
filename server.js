@@ -18,14 +18,14 @@ app.use(bodyParser.json());
 
 app.use(express.static('public'));
 app.get('/contact', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'contact'));
+  res.sendFile(path.join(__dirname, 'public', 'contact.html'));
 });
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.get('/resume', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'resume'));
+  res.sendFile(path.join(__dirname, 'public', 'resume.html'));
 });
 
 app.get('/portfolio', (req, res) => {
